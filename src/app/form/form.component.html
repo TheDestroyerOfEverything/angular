@@ -1,1 +1,25 @@
-<p>form works!</p>
+
+<div class="container th">
+  <h1>User Information</h1>
+  <form [formGroup]="profileForm" (submit)="sendDataToBackend()" id="userInfoForm" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" formControlName="name">
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" formControlName="age">
+
+    <button type="submit">Send Data</button>
+
+    <br>valid = {{profileForm.valid}}
+    <br>pristine = {{profileForm.pristine}}
+    <br>dirty = {{profileForm.dirty}}
+    <br>errors = {{profileForm.errors | json}}
+  </form>
+
+  <div *ngIf="message">
+    <strong>{{message}}</strong>
+  </div>
+</div>
+
+
+
