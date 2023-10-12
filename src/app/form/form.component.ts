@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {DataService, FetchDataResponse} from "../data-service.service";
-import {AppComponent} from "../app.component";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 
 @Component({
@@ -9,11 +9,18 @@ import {AppComponent} from "../app.component";
   styleUrls: ['/form.component.css']
 })
 export class FormComponent implements OnInit{
+  show_error = false;
+  content_list = false;
+  show: any;
+  profileForm = new FormGroup({
+    id: new FormControl<number | null>(null, [Validators.required]),
+    name: new FormControl<string | null>(null, [Validators.required]),
+    age: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
+  });
+  message: string | null | undefined = '';
 
+  constructor(private dataService: DataService) {}
 
-  constructor(private dataService: DataService, private appComponent: AppComponent) {}
-    profileForm = this.appComponent.profileForm;
-    message = this.appComponent.message;
   async sendDataToBackend() {
     /* if (!this.name) {
        throw new Error("name.undefined");
@@ -27,6 +34,10 @@ export class FormComponent implements OnInit{
     }
     if (this.profileForm.valid) {
       const form = this.profileForm.value;
+      const id = form.id;
+      if (!id) {
+        throw new Error("id is undefined");
+      }
       const name = form.name;
       if (!name) {
         throw new Error("name is undefined");
@@ -37,12 +48,20 @@ export class FormComponent implements OnInit{
       }
       console.log("errors", this.profileForm.errors);
 
-      const result = await this.dataService.sendData({name: name, age: age});
+      const result = await this.dataService.sendData({id: id, name: name, age: age});
       console.log("result: ", result);
-      this.message = result.message;
+      window.location.reload()
     } else {
-
+      this.show_error = true;
     }
+  }
+
+  async showData(){
+    const result = await this.dataService.fetchData()
+    this.show = await this.dataService.fetchData()
+    this.content_list = !this.content_list;
+    console.log("result: ", result)
+
   }
 
   ngOnInit() {
@@ -50,5 +69,4 @@ export class FormComponent implements OnInit{
       console.log("value of age is changed", val);
     });
   }
-
 }
